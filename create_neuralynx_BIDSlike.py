@@ -1,3 +1,10 @@
+"""
+Creation date: 13/01/2022
+Author: L. Gardy
+E-mail: ludovic.gardy@cnrs.fr
+Encoding: UTF-8
+"""
+
 import os
 import shutil
 import pandas as pd
@@ -9,17 +16,13 @@ def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, ta
         print("Raise Error (add later)")
 
     ### Setting up the different elements of the BIDS-like tree
-    #root = os.path.split(current_path)[0]
-    #current_folder_name = os.path.split(current_path)[1]
     BIDS_full_name = "sub-{:03}_ses-NcsNlx{:02}_task-{}_run-{:02}".format(patient_num, sess_num, task_name, run_num)
     BIDS_tree_ncs = os.path.join(BIDSlike_folderpath, "sub-{:03}".format(patient_num), "ses-NcsNlx{:02}".format(run_num), "ieeg")
     BIDS_tree_rawdata = os.path.join(BIDSlike_folderpath, "sub-{:03}".format(patient_num), "ses-RawdataNlx{:02}".format(run_num), "ieeg")
     BIDS_tree_TRC = os.path.join(BIDSlike_folderpath, "sub-{:03}".format(patient_num), "ses-MacroMicromed{:02}".format(run_num), "ieeg")
 
     ### Save informations into a dictionnary
-    path_info_dict = {"BIDSlike_folderpath":BIDSlike_folderpath, 
-                      #"current_folder_name":current_folder_name,
-                      #"current_folder_root":root,
+    path_info_dict = {"BIDSlike_folderpath":BIDSlike_folderpath,
                       "BIDS_full_name":BIDS_full_name,
                       "BIDS_tree_ncs":BIDS_tree_ncs,
                       "BIDS_tree_rawdata":BIDS_tree_rawdata,
@@ -32,7 +35,7 @@ def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, ta
     return(path_info_dict)
 
 def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = False):
-
+    ### Split the original file path
     root = os.path.split(current_path)[0]
     current_folder_name = os.path.split(current_path)[1]
 
@@ -176,7 +179,7 @@ if __name__ == "__main__":
 
     task_name = "Stimic"
     micro_identifier = "t"
-    
+
     BIDSlike_folderpath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\BIDS-like_Nlx"
 
     ### Process
@@ -194,4 +197,3 @@ if __name__ == "__main__":
     #- From current .TRC structure to BIDS-like .TRC structure
     TRC_filepath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\69 JJ45\EPIFARjour1.TRC"
     TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
-
