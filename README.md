@@ -20,7 +20,19 @@ This adaptation of the BIDS structure was made to take into account the *hybrid*
 # User need to fill this file for a new usage
 A file named *Electrode names and scales matching.tsv* must be present in the folder containing the channel data (.ncs). This file links the electrode names to the recording scale. If you are using conventional electrodes, the scale will always be *macro*. If you use hybrid electrodes, you will have to distinguish between the different types of electrodes by associating the label *macro* or *micro*. An example is available in the dataset proposed here.
 
-# Example
+# Electrode names and scales matching (.tsv) example
+```
+electrode_name	   scale
+ttb'	             micro
+tb'	               macro
+tb	               macro
+pp'	               macro
+pp	               macro
+of	               macro
+h	                 macro
+```
+
+# Procedure example (main.py)
 ```
 ### Set parameters
 patient_num = 69
