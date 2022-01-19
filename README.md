@@ -15,7 +15,7 @@ The user can perform these actions one after the other or separately and individ
 
 This adaptation of the BIDS structure was made to take into account the "hybrid" aspect of our intracerebral electrodes.
 
-![](illustrations/BIDS-like_SEEG.jpg)
+![](illustrations/BIDS-like_SEEG.png)
 
 # References
 [1] Appelhoff, S., Sanderson, M., Brooks, T. L., van Vliet, M., Quentin, R., Holdgraf, C., Chaumon, M., Mikulan, E., Tavabi, K., Höchenberger, R., et al. (2019). Mne-bids : Organizing electrophysiological data into the bids format and facilitating their analysis. The Journal of Open Source Software, 4(44).
