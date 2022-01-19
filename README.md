@@ -10,7 +10,7 @@ Several major steps follow:
 The user can perform these actions one after the other or separately and individually. The only elements to be modified by the user are :
 - The numbers of: patient, session, run,
 - The name of the task,
-- The symbol (letter[s]) used to characterise the microelectrodes (e.g. *tt*),
+- The symbol (letter[s]) used to characterise the microelectrodes (e.g. *tt* or *t*),
 - The access paths to the various original files.
 
 This adaptation of the BIDS structure was made to take into account the *hybrid* aspect of our intracerebral electrodes.
