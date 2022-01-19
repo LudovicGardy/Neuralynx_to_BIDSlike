@@ -20,6 +20,35 @@ This adaptation of the BIDS structure was made to take into account the *hybrid*
 # User need to fill this file for a new usage
 A file named *Electrode names and scales matching.tsv* must be present in the folder containing the channel data (.ncs). This file links the electrode names to the recording scale. If you are using conventional electrodes, the scale will always be *macro*. If you use hybrid electrodes, you will have to distinguish between the different types of electrodes by associating the label *macro* or *micro*. An example is available in the dataset proposed here.
 
+# Example
+```
+### Set parameters
+patient_num = 69
+sess_num = 1
+run_num = 1
+
+task_name = "Stimic"
+micro_identifier = "t"
+
+BIDSlike_folderpath = r"folderpath/BIDS-like_Nlx"
+
+### Process
+#- Get path info and define BIDS-like path
+path_info_dict = path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name)
+
+#- From current .ncs structure to BIDS-like .ncs structure
+ncs_folderpath = r"folderpath"
+ncs_destination = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, process = True)
+
+#- From current .nrd structure to BIDS-like .nrd structure
+rawdata_filepath = r"folderpath/filename.nrd"
+rawdata_destination = rawdata_to_BIDSlike(rawdata_filepath, path_info_dict, process = True)
+
+#- From current .TRC structure to BIDS-like .TRC structure
+TRC_filepath = r"folderpath/filename.TRC"
+TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
+```
+
 # References
 [1] Appelhoff, S., Sanderson, M., Brooks, T. L., van Vliet, M., Quentin, R., Holdgraf, C., Chaumon, M., Mikulan, E., Tavabi, K., Höchenberger, R., et al. (2019). Mne-bids : Organizing electrophysiological data into the bids format and facilitating their analysis. The Journal of Open Source Software, 4(44).
 
