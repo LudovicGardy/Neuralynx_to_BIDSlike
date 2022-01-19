@@ -22,7 +22,7 @@ A file named *Electrode names and scales matching.tsv* must be present in the fo
 
 # Electrode names and scales matching (.tsv) example
 ```
-electrode_name	scale
+electrode_name	recording_scale
 ttb'	micro
 tb'	macro
 tb	macro
