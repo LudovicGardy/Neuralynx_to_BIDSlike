@@ -42,24 +42,24 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
     ### Print electrode names and scales
     electrodes_scales_tsv_filepath = os.path.join(current_path,'Electrodes names and scales matching.tsv')
     electrodes_names_and_scales_matching_dict = pd.read_csv(electrodes_scales_tsv_filepath, sep='\t')
-    micro_idx_list = np.where(electrodes_names_and_scales_matching_dict["scale"] == "micro")[0]
-    macro_idx_list = np.where(electrodes_names_and_scales_matching_dict["scale"] == "macro")[0]
+    micro_idx_list = np.where(electrodes_names_and_scales_matching_dict["recording_scale"] == "micro")[0]
+    macro_idx_list = np.where(electrodes_names_and_scales_matching_dict["recording_scale"] == "macro")[0]
     micro_names_list = []
     macro_names_list = []
 
     if len(micro_idx_list)>=1:
         print("EEG-micro channels:")
         for micro_idx in micro_idx_list:
-            print(f"   - {electrodes_names_and_scales_matching_dict['electrode name'][micro_idx]}")
-            micro_names_list.append(electrodes_names_and_scales_matching_dict['electrode name'][micro_idx])
+            print(f"   - {electrodes_names_and_scales_matching_dict['electrode_name'][micro_idx]}")
+            micro_names_list.append(electrodes_names_and_scales_matching_dict['electrode_name'][micro_idx])
     else:
         print("No EEG-micro channels detected")
 
     if len(macro_idx_list)>=1:
         print("EEG-macro channels:")
         for macro_idx in macro_idx_list:
-            print(f"   - {electrodes_names_and_scales_matching_dict['electrode name'][macro_idx]}")
-            macro_names_list.append(electrodes_names_and_scales_matching_dict['electrode name'][macro_idx])
+            print(f"   - {electrodes_names_and_scales_matching_dict['electrode_name'][macro_idx]}")
+            macro_names_list.append(electrodes_names_and_scales_matching_dict['electrode_name'][macro_idx])
     else:
         print("No EEG-macro channels detected")
 
