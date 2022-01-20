@@ -18,9 +18,9 @@ This adaptation of the BIDS structure was made to take into account the *hybrid*
 ![](illustrations/BIDS-like_SEEG.png)
 
 # User need to fill this file for a new usage
-A file named *Electrode names and scales matching.tsv* must be present in the folder containing the channel data (.ncs). This file links the electrode names to the recording scale. If you are using conventional electrodes, the scale will always be *macro*. If you use hybrid electrodes, you will have to distinguish between the different types of electrodes by associating the label *macro* or *micro*. An example is available in the dataset proposed here.
+A file named _**Electrode names and scales matching.tsv**_ must be present in the folder containing the channel data (.ncs). This file links the electrode names to the recording scale. If you are using conventional electrodes, the scale will always be *macro*. If you use hybrid electrodes, you will have to distinguish between the different types of electrodes by associating the label *macro* or *micro*. An example is available in the dataset proposed here.
 
-# Electrode names and scales matching (.tsv) example
+## Electrode names and scales matching (.tsv) example
 ```
 electrode_name	recording_scale
 ttb'	micro

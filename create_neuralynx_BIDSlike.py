@@ -1,5 +1,5 @@
 """
-Creation date: 13/01/2022
+Creation date: 2022, January 13
 Author: L. Gardy
 E-mail: ludovic.gardy@cnrs.fr
 Encoding: UTF-8
