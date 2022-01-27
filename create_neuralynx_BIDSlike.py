@@ -12,8 +12,8 @@ import numpy as np
 
 def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name):
     ### Check if the name task has the good writting
-    if task_name not in possible_tasknames:
-        print("Raise Error (add later)")
+    #if task_name not in possible_tasknames:
+    #    print("Raise Error (add later)")
 
     ### Setting up the different elements of the BIDS-like tree
     BIDS_full_name = "sub-{:03}_ses-NcsNlx{:02}_task-{}_run-{:02}".format(patient_num, sess_num, task_name, run_num)
@@ -25,8 +25,8 @@ def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, ta
     path_info_dict = {"BIDSlike_folderpath":BIDSlike_folderpath,
                       "BIDS_full_name":BIDS_full_name,
                       "BIDS_tree_ncs":BIDS_tree_ncs,
-                      "BIDS_tree_rawdata":BIDS_tree_rawdata,
-                      "BIDS_tree_TRC":BIDS_tree_TRC}
+                      "BIDS_tree_nrd":BIDS_tree_rawdata,
+                      "BIDS_tree_trc":BIDS_tree_TRC}
 
     print("Path info:")
     for key in path_info_dict:
@@ -120,15 +120,15 @@ def rawdata_to_BIDSlike(current_path, path_info_dict, process = False):
     renamed_filename = path_info_dict["BIDS_full_name"] + ext
     renamed_filepath = os.path.join(root, renamed_filename)
 
-    destination = os.path.join(path_info_dict["BIDS_tree_rawdata"], renamed_filename)
+    destination = os.path.join(path_info_dict["BIDS_tree_nrd"], renamed_filename)
 
     if process:
         ### Rename file
         os.rename(current_path,renamed_filepath)
 
         ### Create folder path
-        if not os.path.exists(path_info_dict["BIDS_tree_rawdata"]):
-            os.makedirs(path_info_dict["BIDS_tree_rawdata"])
+        if not os.path.exists(path_info_dict["BIDS_tree_nrd"]):
+            os.makedirs(path_info_dict["BIDS_tree_nrd"])
         else:
             print("Path already exists. Overwrite = False")
 
@@ -148,15 +148,15 @@ def TRC_to_BIDSlike(current_path, path_info_dict, process = False):
     renamed_filename = path_info_dict["BIDS_full_name"] + ext
     renamed_filepath = os.path.join(root, renamed_filename)
 
-    destination = os.path.join(path_info_dict["BIDS_tree_TRC"], renamed_filename)
+    destination = os.path.join(path_info_dict["BIDS_tree_trc"], renamed_filename)
 
     if process:
         ### Rename file
         os.rename(current_path,renamed_filepath)
 
         ### Create folder path
-        if not os.path.exists(path_info_dict["BIDS_tree_TRC"]):
-            os.makedirs(path_info_dict["BIDS_tree_TRC"])
+        if not os.path.exists(path_info_dict["BIDS_tree_trc"]):
+            os.makedirs(path_info_dict["BIDS_tree_trc"])
         else:
             print("Path already exists. Overwrite = False")
 

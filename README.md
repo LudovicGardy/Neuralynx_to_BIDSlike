@@ -32,7 +32,10 @@ of	macro
 h	macro
 ```
 
-# 3. Procedure example (main.py)
+# 3. Procedure example
+Users can use either the script directly (create_neuralynx_BIDSlike.py), or through the GUI provided with this program (open_GUI.py).
+
+## 3.1 Example using the script
 ```
 ### Set parameters
 patient_num = 69
@@ -60,6 +63,9 @@ rawdata_destination = rawdata_to_BIDSlike(rawdata_filepath, path_info_dict, proc
 TRC_filepath = r"folderpath/filename.TRC"
 TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 ```
+
+## 3.2 Example using the GUI
+![](illustrations/open_GUI.png)
 
 # 4. References
 [1] Appelhoff, S., Sanderson, M., Brooks, T. L., van Vliet, M., Quentin, R., Holdgraf, C., Chaumon, M., Mikulan, E., Tavabi, K., Höchenberger, R., et al. (2019). Mne-bids : Organizing electrophysiological data into the bids format and facilitating their analysis. The Journal of Open Source Software, 4(44).
