@@ -67,7 +67,7 @@ TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 ```
 
 ## 3.2 Example using the GUI
-To run the program, user can either open the script "open_GUI.py", or double click the "start_app.bat".
+To run the program, user can either open the script "open_GUI.py" using a python IDE, or simply double click the "start_app" file, that should automatically launch the GUI.
 
 ![](illustrations/open_GUI.png)
 
