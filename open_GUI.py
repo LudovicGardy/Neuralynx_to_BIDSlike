@@ -8,6 +8,7 @@ import os
 import sys
 import json
 import numpy as np
+import traceback
 from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, QStyle, QErrorMessage,
     QTextEdit, QGridLayout, QApplication, QDialog, QPushButton,
     QVBoxLayout, QMainWindow, QMenu, QMessageBox, QSizePolicy, QAction,
@@ -17,16 +18,33 @@ from PyQt5.QtCore import QCoreApplication
 import time
 
 #sys.path.append(r"G:\GardyL\Data_storage\EPIFAR_storage\BIDS_data\derivatives\Neuralynx_to_BIDSlike")
-sys.path.append(r"C:\Users\GARDy\Desktop\Neuralynx_to_BIDSlike")
-from create_neuralynx_BIDSlike import path_to_BIDSlikepath
+#sys.path.append(r"C:\Users\GARDy\Desktop\Neuralynx_to_BIDSlike")
+from create_neuralynx_BIDSlike import (path_to_BIDSlikepath, ncs_to_BIDSlike, rawdata_to_BIDSlike, TRC_to_BIDSlike)
+
+def confirm_messageBox(title, text, icon, cancel_option = True):
+    msgBox = QMessageBox()
+    msgBox.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.WindowMinimizeButtonHint | QtCore.Qt.WindowMaximizeButtonHint | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.Window )
+    msgBox.setIcon(icon)
+    msgBox.setWindowTitle(title)
+    msgBox.setText(text)
+
+    if cancel_option:
+        msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    else:
+        msgBox.setStandardButtons(QMessageBox.Ok)
+
+    returnValue = msgBox.exec()
+    if returnValue == QMessageBox.Ok:
+        print('Confirmed.')
+    return(returnValue)
 
 class empty_win(QWidget):
     def __init__(self):
         super().__init__()
 
         self.init_GUI()
-
         self.show()
+
 
     def init_GUI(self):
         ### Def window size
@@ -37,6 +55,8 @@ class empty_win(QWidget):
 
         self.setGeometry(left, top, width, height)
         self.setWindowTitle('BIDS-like architecture creator')
+
+        self.path_info_dict = {}
 
         ### BIDS naming frame
         BIDSnaming_frame = QFrame()
@@ -67,7 +87,7 @@ class empty_win(QWidget):
         task_label = QLabel("  Task-")
         self.taskname_ComboBox = QComboBox()
         [self.taskname_ComboBox.addItem(taskname) for taskname in possible_tasknames]
-        self.taskname_ComboBox.setCurrentIndex(1)
+        self.taskname_ComboBox.setCurrentIndex(0)
         self.taskname_ComboBox.currentIndexChanged.connect(self.taskname_ComboBox_fun)
 
         BIDSnaming_layout.addWidget(patient_label)
@@ -100,7 +120,7 @@ class empty_win(QWidget):
         input_format_label = QLabel("Input format: ")
         self.ext_ComboBox = QComboBox()
         [self.ext_ComboBox.addItem(ext) for ext in possible_ext]
-        self.ext_ComboBox.setCurrentIndex(1)
+        self.ext_ComboBox.setCurrentIndex(0)
         self.ext_ComboBox.currentIndexChanged.connect(self.ext_ComboBox_fun)
         self.ext_ComboBox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -252,6 +272,7 @@ class empty_win(QWidget):
             error_dialog.exec()
 
     def ext_ComboBox_fun(self, callback):
+        self.input_path_edit.setText("")
         self.input_ext_edit.setText(self.ext_ComboBox.currentText())
 
     def microID_infoButton_fun(self):
@@ -269,9 +290,9 @@ class empty_win(QWidget):
     def input_browseButton_fun(self):
         selected_path = ""
         if ".nrd" in self.ext_ComboBox.currentText().lower() or ".trc" in self.ext_ComboBox.currentText().lower():
-            selected_path = QFileDialog.getOpenFileName(None, "Select an EEG file:", "EEG files (*.trc *.nrd)")[0]
+            selected_path = QFileDialog.getOpenFileName(self, self.tr("Select an EEG file"), '~', self.tr("EEG files (*.trc *.nrd)"))[0]
         elif ".ncs" in self.ext_ComboBox.currentText().lower():
-            selected_path = QFileDialog.getExistingDirectory(None, 'Select a Neuralynx EEG folder', '~', QFileDialog.ShowDirsOnly)
+            selected_path = QFileDialog.getExistingDirectory(self, 'Select a Neuralynx EEG folder', '~', QFileDialog.ShowDirsOnly)
 
         self.input_path_edit.setText(selected_path)
 
@@ -283,7 +304,7 @@ class empty_win(QWidget):
 
     def output_browseButton_fun(self):
         selected_path = ""
-        selected_path = QFileDialog.getExistingDirectory(None, 'Select your BIDS-like root folder', '~', QFileDialog.ShowDirsOnly)
+        selected_path = QFileDialog.getExistingDirectory(self, 'Select your BIDS-like root folder', '~', QFileDialog.ShowDirsOnly)
         self.output_path_edit.setText(selected_path)
 
     def button_check_fun(self):
@@ -292,14 +313,14 @@ class empty_win(QWidget):
         ext = self.input_ext_edit.text().replace(".","")
 
         ### Get BIDS like folder path and file names
-        path_info_dict = path_to_BIDSlikepath(int(self.patient_edit.text()), int(self.sess_edit.text()), int(self.run_edit.text()), self.output_path_edit.text(), self.taskname_ComboBox.currentText())
+        self.path_info_dict = path_to_BIDSlikepath(int(self.patient_edit.text()), int(self.sess_edit.text()), int(self.run_edit.text()), self.output_path_edit.text(), self.taskname_ComboBox.currentText())
 
         ### Split path
         path_components = []
-        path = os.path.normpath(path_info_dict[f"BIDS_tree_{ext.lower()}"])
+        path = os.path.normpath(self.path_info_dict[f"BIDS_tree_{ext.lower()}"])
         path = path.split(os.sep)
         [path_components.append(_comp) for _comp in path if _comp]
-        path_components.append(path_info_dict["BIDS_full_name"])
+        path_components.append(self.path_info_dict["BIDS_full_name"])
 
         ### Print BIDS path tree
         self.description_textbox.append("")
@@ -317,7 +338,42 @@ class empty_win(QWidget):
             tree_level+=2
 
     def button_OK_fun(self):
-        print("OK")
+
+        if not self.path_info_dict:
+            self.button_check_fun()
+
+        text = f"Format: {self.ext_ComboBox.currentText().lower()} \n\nOrigin: {self.input_path_edit.text()} \n\nDestination (root): {self.output_path_edit.text()} \n\nThis action is definitive."
+        returnValue = confirm_messageBox("Please confirm", text, QMessageBox.Question, cancel_option = True)
+
+        if returnValue == QMessageBox.Ok:
+            self.proceed_BIDSlike_architecture()
+        else:
+            returnValue = confirm_messageBox("Procedure aborted", "Aborted.", QMessageBox.Information, cancel_option = False)
+
+    def displayConfirm_and_resetInputPath(self):
+            returnValue = confirm_messageBox("Done", "Done! BIDS-like architecture created.", QMessageBox.Information, cancel_option = False)
+            self.input_path_edit.setText("")
+
+    def proceed_BIDSlike_architecture(self):
+        self.description_textbox.append("")
+
+        try:
+            if ".ncs" in self.ext_ComboBox.currentText().lower():
+                ncs_destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
+                self.description_textbox.append("Neuralynx [ncs] data processed. Data were sent to destination path.")
+            elif ".nrd" in self.ext_ComboBox.currentText().lower():
+                rawdata_destination = rawdata_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
+                self.description_textbox.append("Neuralynx [nrd] data processed. Data were sent to destination path.")
+            elif ".trc" in self.ext_ComboBox.currentText().lower():
+                TRC_destination = TRC_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
+                self.description_textbox.append("Neuralynx [trc] data processed. Data were sent to destination path.")
+
+            self.displayConfirm_and_resetInputPath()
+
+        except:
+            var = traceback.format_exc()
+            self.description_textbox.append(var)
+
 
 if __name__ == "__main__":
 
