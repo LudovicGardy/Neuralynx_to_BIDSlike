@@ -337,6 +337,16 @@ class BIDSlike_creator_win(QWidget):
             self.description_textbox.append("{} {}".format( "_"*tree_level,_comp ))
             tree_level+=2
 
+        if ".ncs" in self.ext_ComboBox.currentText().lower():
+            ncs_renamed_list, ncs_destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            self.description_textbox.append("Neuralynx [ncs] data processed. Data were sent to destination path.")
+
+            self.description_textbox.append("\n#---------------------------\n# macro-EEG channels:\n#---------------------------")
+            [self.description_textbox.append("# {}".format(chan_name.replace("macro",""))) for chan_name in ncs_renamed_list if "macro" in chan_name]
+
+            self.description_textbox.append("\n#---------------------------\n# micro-EEG channels:\n#---------------------------")
+            [self.description_textbox.append("# {}".format(chan_name.replace("micro",""))) for chan_name in ncs_renamed_list if "micro" in chan_name]
+
     def button_OK_fun(self):
 
         if not self.path_info_dict:
@@ -359,7 +369,7 @@ class BIDSlike_creator_win(QWidget):
 
         try:
             if ".ncs" in self.ext_ComboBox.currentText().lower():
-                ncs_destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
+                ncs_renamed_list, ncs_destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
                 self.description_textbox.append("Neuralynx [ncs] data processed. Data were sent to destination path.")
             elif ".nrd" in self.ext_ComboBox.currentText().lower():
                 rawdata_destination = rawdata_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)

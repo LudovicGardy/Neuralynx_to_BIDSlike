@@ -110,7 +110,7 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
         else:
             print("Folder already exists. Overwrite = False")
 
-    return(destination)
+    return(ncs_renamed_list, destination)
 
 def rawdata_to_BIDSlike(current_path, path_info_dict, process = False):
     ### Rename all the channel names in the containing folder
@@ -188,7 +188,7 @@ if __name__ == "__main__":
 
     #- From current .ncs structure to BIDS-like .ncs structure
     ncs_folderpath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\69 JJ45\epifar jour 1"
-    ncs_destination = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, process = True)
+    ncs_renamed_list, ncs_destination = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, process = True)
 
     #- From current .nrd structure to BIDS-like .nrd structure
     rawdata_filepath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\69 JJ45\epifar j1.nrd"
