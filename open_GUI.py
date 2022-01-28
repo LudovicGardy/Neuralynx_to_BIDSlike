@@ -38,7 +38,7 @@ def confirm_messageBox(title, text, icon, cancel_option = True):
         print('Confirmed.')
     return(returnValue)
 
-class empty_win(QWidget):
+class BIDSlike_creator_win(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -383,5 +383,5 @@ if __name__ == "__main__":
         app = QApplication(sys.argv)
 
     # run
-    mywindow = empty_win()
+    mywindow = BIDSlike_creator_win()
     sys.exit(app.exec_())
