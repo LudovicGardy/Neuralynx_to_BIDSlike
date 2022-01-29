@@ -323,7 +323,8 @@ class BIDSlike_creator_win(QWidget):
             self.description_textbox.append(f"Output (BIDS-like root) folder ---> {os.path.split(selected_path)[-1]}")
 
     def button_check_fun(self):
-        self.display_error = False
+        self.display_error_pathExists = False
+        self.display_error_noTsvMatchingFile = False
         self.destination = ""
 
         ### Get ext
@@ -342,7 +343,7 @@ class BIDSlike_creator_win(QWidget):
 
         ### Display channels name and recording scale
         if ".ncs" in self.ext_ComboBox.currentText().lower():
-            ncs_renamed_list, self.destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            ncs_renamed_list, self.destination, self.is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
 
             self.description_textbox.append("\n#---------------------------\n# macro-EEG channels:\n#---------------------------")
             [self.description_textbox.append("# {}".format(chan_name.replace("macro",""))) for chan_name in ncs_renamed_list if "macro" in chan_name]
@@ -350,15 +351,16 @@ class BIDSlike_creator_win(QWidget):
             self.description_textbox.append("\n#---------------------------\n# micro-EEG channels:\n#---------------------------")
             [self.description_textbox.append("# {}".format(chan_name.replace("micro",""))) for chan_name in ncs_renamed_list if "micro" in chan_name]
 
-            if os.path.exists(self.destination): self.display_error = True
+            if os.path.exists(self.destination): self.display_error_pathExists = True
+            if not self.is_tsv_matching_file : self.display_error_noTsvMatchingFile = True
 
-        ### Set display_error if path already exists. Will be displayed to the user later.
+        ### Set display_error_pathExists if path already exists. Will be displayed to the user later.
         elif ".nrd" in self.ext_ComboBox.currentText().lower():
             self.destination = nrd_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
-            if os.path.isfile(self.destination): self.display_error = True
+            if os.path.isfile(self.destination): self.display_error_pathExists = True
         elif ".trc" in self.ext_ComboBox.currentText().lower():
             self.destination = trc_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
-            if os.path.isfile(self.destination): self.display_error = True
+            if os.path.isfile(self.destination): self.display_error_pathExists = True
 
         ### Display BIDS path tree
         self.description_textbox.append("")
@@ -376,16 +378,20 @@ class BIDSlike_creator_win(QWidget):
             tree_level+=2
 
         ### Check if path exists
-        if self.display_error:
+        if self.display_error_pathExists:
             text = "This destination folder/file path already exists: \n\n<< {} >>\n\n Nothing will happen (overwrite = False).".format(self.destination.replace("\\","/"))
             messageBox_popup("Warning [1]", text, QMessageBox.Critical, cancel_option = False) #QMessageBox.Warning
+
+        if self.display_error_noTsvMatchingFile:
+            text = "The << Electrodes names and scales matching.tsv >> file that should be inside the Neuralynx ncs folder is missing. See example dataset provided with this program for more information."
+            messageBox_popup("tsv matching file not found", text, QMessageBox.Critical, cancel_option = False) #QMessageBox.Warning
 
     def button_OK_fun(self):
 
         if not self.path_info_dict:
             self.button_check_fun()
 
-        if not self.display_error:
+        if not self.display_error_pathExists and not self.display_error_noTsvMatchingFile:
             _dest = self.destination.replace("\\","/")
             _BIDSname_text = f"#------------------------------------------------\n# {os.path.split(_dest)[-1]}\n#------------------------------------------------"
             text = f"{_BIDSname_text} \n\nFormat: {self.ext_ComboBox.currentText().lower()} \n\nOrigin: {self.input_path_edit.text()} \n\nDestination: {_dest} \n\nThis action is definitive. If you cancel, nothing will happen."
@@ -394,10 +400,14 @@ class BIDSlike_creator_win(QWidget):
             if returnValue == QMessageBox.Ok:
                 self.proceed_BIDSlike_architecture()
             else:
-                returnValue = messageBox_popup("Procedure aborted", "Aborted.", QMessageBox.Information, cancel_option = False)
+                returnValue = messageBox_popup("Aborted", "Procedure aborted. Nothing will happen.", QMessageBox.Information, cancel_option = False)
         else:
-            text = "This destination folder/file path already exists: \n\n<< {} >>\n\n Nothing will happen (overwrite = False).".format(self.destination.replace("\\","/"))
-            messageBox_popup("Warning [2]", text, QMessageBox.Critical, cancel_option = False) #QMessageBox.Warning
+            if self.display_error_pathExists:
+                text = "This destination folder/file path already exists: \n\n<< {} >>\n\n Nothing will happen (overwrite = False).".format(self.destination.replace("\\","/"))
+                messageBox_popup("Warning [2]", text, QMessageBox.Critical, cancel_option = False) #QMessageBox.Warning
+            elif self.display_error_noTsvMatchingFile:
+                text = "The << Electrodes names and scales matching.tsv >> file that should be inside the Neuralynx ncs folder is missing. See example dataset provided with this program for more information."
+                messageBox_popup("tsv matching file not found", text, QMessageBox.Critical, cancel_option = False) #QMessageBox.Warning
 
     def displayConfirm_and_resetInputPath(self):
             returnValue = messageBox_popup("Done", "Done! BIDS-like architecture created.", QMessageBox.Information, cancel_option = False)
@@ -408,7 +418,7 @@ class BIDSlike_creator_win(QWidget):
 
         try:
             if ".ncs" in self.ext_ComboBox.currentText().lower():
-                ncs_renamed_list, destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
+                ncs_renamed_list, destination, self.is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
                 self.description_textbox.append("\nNeuralynx [ncs] data processed. Data were sent to destination path.")
             elif ".nrd" in self.ext_ComboBox.currentText().lower():
                 destination = rawdata_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)

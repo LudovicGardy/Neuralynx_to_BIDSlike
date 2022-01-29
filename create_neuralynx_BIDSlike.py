@@ -35,17 +35,26 @@ def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, ta
     return(path_info_dict)
 
 def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = False):
+    electrodes_names_and_scales_matching_dict = {"electrode_name": [], "recording_scale": []}
+    micro_names_list = []
+    macro_names_list = []
+    micro_idx_list = []
+    macro_idx_list = []
+
     ### Split the original file path
     root = os.path.split(current_path)[0]
     current_folder_name = os.path.split(current_path)[1]
 
     ### Print electrode names and scales
     electrodes_scales_tsv_filepath = os.path.join(current_path,'Electrodes names and scales matching.tsv')
-    electrodes_names_and_scales_matching_dict = pd.read_csv(electrodes_scales_tsv_filepath, sep='\t')
-    micro_idx_list = np.where(electrodes_names_and_scales_matching_dict["recording_scale"] == "micro")[0]
-    macro_idx_list = np.where(electrodes_names_and_scales_matching_dict["recording_scale"] == "macro")[0]
-    micro_names_list = []
-    macro_names_list = []
+
+    if os.path.isfile(electrodes_scales_tsv_filepath):
+        electrodes_names_and_scales_matching_dict = pd.read_csv(electrodes_scales_tsv_filepath, sep='\t')
+        micro_idx_list = np.where(electrodes_names_and_scales_matching_dict["recording_scale"] == "micro")[0]
+        macro_idx_list = np.where(electrodes_names_and_scales_matching_dict["recording_scale"] == "macro")[0]
+        is_tsv_matching_file = True
+    else:
+        is_tsv_matching_file = False
 
     if len(micro_idx_list)>=1:
         print("EEG-micro channels:")
@@ -110,7 +119,7 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
         else:
             print("Folder already exists. Overwrite = False")
 
-    return(ncs_renamed_list, destination)
+    return(ncs_renamed_list, destination, is_tsv_matching_file)
 
 def rawdata_to_BIDSlike(current_path, path_info_dict, process = False):
     ### Rename all the channel names in the containing folder
@@ -188,7 +197,7 @@ if __name__ == "__main__":
 
     #- From current .ncs structure to BIDS-like .ncs structure
     ncs_folderpath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\69 JJ45\epifar jour 1"
-    ncs_renamed_list, ncs_destination = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, process = True)
+    ncs_renamed_list, ncs_destination, is_tsv_matching_file = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, process = True)
 
     #- From current .nrd structure to BIDS-like .nrd structure
     rawdata_filepath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\69 JJ45\epifar j1.nrd"
