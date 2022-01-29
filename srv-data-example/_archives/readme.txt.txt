@@ -1,0 +1,1 @@
+Copy/Paste these folders somewhere to test the program as many times as you want. You should not modify the folders in "_archive" directly, or you will not be able to make several tests as the result of the program is irreversible.
