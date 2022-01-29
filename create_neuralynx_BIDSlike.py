@@ -11,10 +11,6 @@ import pandas as pd
 import numpy as np
 
 def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name):
-    ### Check if the name task has the good writting
-    #if task_name not in possible_tasknames:
-    #    print("Raise Error (add later)")
-
     ### Setting up the different elements of the BIDS-like tree
     BIDS_full_name = "sub-{:03}_ses-NcsNlx{:02}_task-{}_run-{:02}".format(patient_num, sess_num, task_name, run_num)
     BIDS_tree_ncs = os.path.join(BIDSlike_folderpath, "sub-{:03}".format(patient_num), "ses-NcsNlx{:02}".format(run_num), "ieeg")
@@ -35,6 +31,7 @@ def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, ta
     return(path_info_dict)
 
 def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = False):
+    ### Initialize variables
     electrodes_names_and_scales_matching_dict = {"electrode_name": [], "recording_scale": []}
     micro_names_list = []
     macro_names_list = []
@@ -55,6 +52,8 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
         is_tsv_matching_file = True
     else:
         is_tsv_matching_file = False
+        process = False
+        print("The << Electrodes names and scales matching.tsv >> file that should be inside the Neuralynx ncs folder is missing. See example dataset provided with this program for more information.")
 
     if len(micro_idx_list)>=1:
         print("EEG-micro channels:")
@@ -102,12 +101,12 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
         if os.path.join(root, current_folder_name) != os.path.join(root,path_info_dict["BIDS_full_name"]):
             os.rename(os.path.join(root, current_folder_name),os.path.join(root,path_info_dict["BIDS_full_name"]))
         else:
-            print("folder name already exists")
+            print("Folder name already exists. Overwrite = False.")
 
         if not os.path.exists(path_info_dict["BIDS_tree_ncs"]):
             os.makedirs(path_info_dict["BIDS_tree_ncs"])
         else:
-            print("Path already exists. Overwrite = False")
+            print("Path already exists. Overwrite = False.")
 
     ### Affect channels data to the good place in our tree structure
     source = os.path.join(root, path_info_dict["BIDS_full_name"])
@@ -117,7 +116,7 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
         if not os.path.exists(destination):
             shutil.move(source, destination)
         else:
-            print("Folder already exists. Overwrite = False")
+            print("Folder already exists. Overwrite = False.")
 
     return(ncs_renamed_list, destination, is_tsv_matching_file)
 
@@ -139,13 +138,13 @@ def rawdata_to_BIDSlike(current_path, path_info_dict, process = False):
         if not os.path.exists(path_info_dict["BIDS_tree_nrd"]):
             os.makedirs(path_info_dict["BIDS_tree_nrd"])
         else:
-            print("Path already exists. Overwrite = False")
+            print("Path already exists. Overwrite = False.")
 
         ### Cut / paste in the good location of our BIDS-like tree
         if not os.path.isfile(destination):
             shutil.move(renamed_filepath, destination)
         else:
-            print("File already exists. Overwrite = False")
+            print("File already exists. Overwrite = False.")
 
     return(destination)
 

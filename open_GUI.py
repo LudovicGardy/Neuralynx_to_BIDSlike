@@ -343,7 +343,7 @@ class BIDSlike_creator_win(QWidget):
 
         ### Display channels name and recording scale
         if ".ncs" in self.ext_ComboBox.currentText().lower():
-            ncs_renamed_list, self.destination, self.is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            ncs_renamed_list, self.destination, is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
 
             self.description_textbox.append("\n#---------------------------\n# macro-EEG channels:\n#---------------------------")
             [self.description_textbox.append("# {}".format(chan_name.replace("macro",""))) for chan_name in ncs_renamed_list if "macro" in chan_name]
@@ -352,7 +352,7 @@ class BIDSlike_creator_win(QWidget):
             [self.description_textbox.append("# {}".format(chan_name.replace("micro",""))) for chan_name in ncs_renamed_list if "micro" in chan_name]
 
             if os.path.exists(self.destination): self.display_error_pathExists = True
-            if not self.is_tsv_matching_file : self.display_error_noTsvMatchingFile = True
+            if not is_tsv_matching_file : self.display_error_noTsvMatchingFile = True
 
         ### Set display_error_pathExists if path already exists. Will be displayed to the user later.
         elif ".nrd" in self.ext_ComboBox.currentText().lower():
@@ -418,7 +418,7 @@ class BIDSlike_creator_win(QWidget):
 
         try:
             if ".ncs" in self.ext_ComboBox.currentText().lower():
-                ncs_renamed_list, destination, self.is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
+                ncs_renamed_list, destination, is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
                 self.description_textbox.append("\nNeuralynx [ncs] data processed. Data were sent to destination path.")
             elif ".nrd" in self.ext_ComboBox.currentText().lower():
                 destination = rawdata_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
