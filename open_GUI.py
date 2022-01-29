@@ -21,7 +21,7 @@ import time
 #sys.path.append(r"C:\Users\GARDy\Desktop\Neuralynx_to_BIDSlike")
 from create_neuralynx_BIDSlike import (path_to_BIDSlikepath, ncs_to_BIDSlike, rawdata_to_BIDSlike, TRC_to_BIDSlike)
 
-def confirm_messageBox(title, text, icon, cancel_option = True):
+def messageBox_popup(title, text, icon, cancel_option = True):
     msgBox = QMessageBox()
     msgBox.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.WindowMinimizeButtonHint | QtCore.Qt.WindowMaximizeButtonHint | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.Window )
     msgBox.setIcon(icon)
@@ -50,8 +50,8 @@ class BIDSlike_creator_win(QWidget):
         ### Def window size
         left = 200
         top = 100
-        width = 600
-        height = 600
+        width = 700
+        height = 700
 
         self.setGeometry(left, top, width, height)
         self.setWindowTitle('BIDS-like architecture creator')
@@ -178,12 +178,12 @@ class BIDSlike_creator_win(QWidget):
         self.input_path_edit.setText("")
         self.input_path_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-        self.input_ext_edit = QLineEdit()
+        self.input_ext_edit = QLabel() #QLineEdit()
         self.input_ext_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.input_ext_edit.setText(self.ext_ComboBox.currentText())
         self.input_ext_edit.setFixedWidth(50)
         #self.input_ext_edit.setStyleSheet("background-color: lightgray")
-        self.input_ext_edit.setStyleSheet("background: #636363 ;color: #ffffff;")
+        self.input_ext_edit.setStyleSheet("background: #636363 ;color: #ffffff;border: 2px solid #1f48cf;")
 
         input_path_layout.addWidget(input_infoButton)
         input_path_layout.addWidget(input_browseButton)
@@ -214,9 +214,16 @@ class BIDSlike_creator_win(QWidget):
         self.output_path_edit.setText("")
         self.output_path_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
+        self.output_folder_edit = QLabel() #QLineEdit()
+        self.output_folder_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.output_folder_edit.setText("")
+        self.output_folder_edit.setFixedWidth(150)
+        self.output_folder_edit.setStyleSheet("background: #636363 ;color: #ffffff;border: 2px solid #1f48cf;")
+
         output_path_layout.addWidget(output_infoButton)
         output_path_layout.addWidget(output_browseButton)
         output_path_layout.addWidget(self.output_path_edit)
+        output_path_layout.addWidget(self.output_folder_edit)
 
         ### Validation Frame
         self.description_textbox = QTextBrowser(self)
@@ -295,6 +302,9 @@ class BIDSlike_creator_win(QWidget):
             selected_path = QFileDialog.getExistingDirectory(self, 'Select a Neuralynx EEG folder', '~', QFileDialog.ShowDirsOnly)
 
         self.input_path_edit.setText(selected_path)
+        self.description_textbox.append("")
+        self.description_textbox.append(f"Input data: {os.path.split(selected_path)[-1]}")
+
 
     def output_infoButton_fun(self):
         output_infoButton_dialog = QErrorMessage()
@@ -307,7 +317,13 @@ class BIDSlike_creator_win(QWidget):
         selected_path = QFileDialog.getExistingDirectory(self, 'Select your BIDS-like root folder', '~', QFileDialog.ShowDirsOnly)
         self.output_path_edit.setText(selected_path)
 
+        self.output_folder_edit.setText(os.path.split(selected_path)[-1])
+        self.description_textbox.append("")
+        self.description_textbox.append(f"Output (BIDS-like root) folder: {os.path.split(selected_path)[-1]}")
+
     def button_check_fun(self):
+        self.display_error = False
+        self.destination = ""
 
         ### Get ext
         ext = self.input_ext_edit.text().replace(".","")
@@ -317,12 +333,35 @@ class BIDSlike_creator_win(QWidget):
 
         ### Split path
         path_components = []
-        path = os.path.normpath(self.path_info_dict[f"BIDS_tree_{ext.lower()}"])
+        path = self.path_info_dict[f"BIDS_tree_{ext.lower()}"]
+        path = os.path.normpath(path)
         path = path.split(os.sep)
         [path_components.append(_comp) for _comp in path if _comp]
         path_components.append(self.path_info_dict["BIDS_full_name"])
 
-        ### Print BIDS path tree
+        ### Display channels name and recording scale
+        if ".ncs" in self.ext_ComboBox.currentText().lower():
+            ncs_renamed_list, self.destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            self.description_textbox.append("Neuralynx [ncs] data processed. Data were sent to destination path.")
+
+            self.description_textbox.append("\n#---------------------------\n# macro-EEG channels:\n#---------------------------")
+            [self.description_textbox.append("# {}".format(chan_name.replace("macro",""))) for chan_name in ncs_renamed_list if "macro" in chan_name]
+
+            self.description_textbox.append("\n#---------------------------\n# micro-EEG channels:\n#---------------------------")
+            [self.description_textbox.append("# {}".format(chan_name.replace("micro",""))) for chan_name in ncs_renamed_list if "micro" in chan_name]
+
+        ### Display an error if path already exists
+        if ".ncs" in self.ext_ComboBox.currentText().lower():
+            ncs_renamed_list, self.destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            if os.path.exists(self.destination): self.display_error = True
+        elif ".nrd" in self.ext_ComboBox.currentText().lower():
+            self.destination = nrd_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            if os.path.isfile(self.destination): self.display_error = True
+        elif ".trc" in self.ext_ComboBox.currentText().lower():
+            self.destination = trc_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            if os.path.isfile(self.destination): self.display_error = True
+
+        ### Display BIDS path tree
         self.description_textbox.append("")
         self.description_textbox.append("Original path:")
         self.description_textbox.append(self.input_path_edit.text())
@@ -337,31 +376,30 @@ class BIDSlike_creator_win(QWidget):
             self.description_textbox.append("{} {}".format( "_"*tree_level,_comp ))
             tree_level+=2
 
-        if ".ncs" in self.ext_ComboBox.currentText().lower():
-            ncs_renamed_list, ncs_destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
-            self.description_textbox.append("Neuralynx [ncs] data processed. Data were sent to destination path.")
-
-            self.description_textbox.append("\n#---------------------------\n# macro-EEG channels:\n#---------------------------")
-            [self.description_textbox.append("# {}".format(chan_name.replace("macro",""))) for chan_name in ncs_renamed_list if "macro" in chan_name]
-
-            self.description_textbox.append("\n#---------------------------\n# micro-EEG channels:\n#---------------------------")
-            [self.description_textbox.append("# {}".format(chan_name.replace("micro",""))) for chan_name in ncs_renamed_list if "micro" in chan_name]
+        ### Check if path exists
+        if self.display_error:
+            text = "This destination folder/file path already exists: \n\n<< {} >>\n\n Nothing will happen (overwrite = False).".format(self.destination.replace("\\","/"))
+            messageBox_popup("Warning [1]", text, QMessageBox.Critical, cancel_option = False) #QMessageBox.Warning
 
     def button_OK_fun(self):
 
         if not self.path_info_dict:
             self.button_check_fun()
 
-        text = f"Format: {self.ext_ComboBox.currentText().lower()} \n\nOrigin: {self.input_path_edit.text()} \n\nDestination (root): {self.output_path_edit.text()} \n\nThis action is definitive."
-        returnValue = confirm_messageBox("Please confirm", text, QMessageBox.Question, cancel_option = True)
+        if not self.display_error:
+            text = f"Format: {self.ext_ComboBox.currentText().lower()} \n\nOrigin: {self.input_path_edit.text()} \n\nDestination (root): {self.output_path_edit.text()} \n\nThis action is definitive."
+            returnValue = messageBox_popup("Please confirm", text, QMessageBox.Question, cancel_option = True)
 
-        if returnValue == QMessageBox.Ok:
-            self.proceed_BIDSlike_architecture()
+            if returnValue == QMessageBox.Ok:
+                self.proceed_BIDSlike_architecture()
+            else:
+                returnValue = messageBox_popup("Procedure aborted", "Aborted.", QMessageBox.Information, cancel_option = False)
         else:
-            returnValue = confirm_messageBox("Procedure aborted", "Aborted.", QMessageBox.Information, cancel_option = False)
+            text = "This destination folder/file path already exists: \n\n<< {} >>\n\n Nothing will happen (overwrite = False).".format(self.destination.replace("\\","/"))
+            messageBox_popup("Warning [2]", text, QMessageBox.Critical, cancel_option = False) #QMessageBox.Warning
 
     def displayConfirm_and_resetInputPath(self):
-            returnValue = confirm_messageBox("Done", "Done! BIDS-like architecture created.", QMessageBox.Information, cancel_option = False)
+            returnValue = messageBox_popup("Done", "Done! BIDS-like architecture created.", QMessageBox.Information, cancel_option = False)
             self.input_path_edit.setText("")
 
     def proceed_BIDSlike_architecture(self):
@@ -369,13 +407,13 @@ class BIDSlike_creator_win(QWidget):
 
         try:
             if ".ncs" in self.ext_ComboBox.currentText().lower():
-                ncs_renamed_list, ncs_destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
+                ncs_renamed_list, destination = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
                 self.description_textbox.append("Neuralynx [ncs] data processed. Data were sent to destination path.")
             elif ".nrd" in self.ext_ComboBox.currentText().lower():
-                rawdata_destination = rawdata_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
+                destination = rawdata_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
                 self.description_textbox.append("Neuralynx [nrd] data processed. Data were sent to destination path.")
             elif ".trc" in self.ext_ComboBox.currentText().lower():
-                TRC_destination = TRC_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
+                destination = TRC_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
                 self.description_textbox.append("Neuralynx [trc] data processed. Data were sent to destination path.")
 
             self.displayConfirm_and_resetInputPath()
