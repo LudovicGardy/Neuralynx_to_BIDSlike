@@ -10,7 +10,9 @@ import shutil
 import pandas as pd
 import numpy as np
 
-def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name):
+from create_BIDS_files import (create_dataset_description_json, create_participants_json, create_info_json, create_participants_tsv, create_session_tsv, create_scans_tsv, create_channels_tsv, create_events_tsv)
+
+def create_BIDS_name(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name):
     ### Setting up the different elements of the BIDS-like tree
     BIDS_full_name = "sub-{:03}_ses-NcsNlx{:02}_task-{}_run-{:02}".format(patient_num, sess_num, task_name, run_num)
     BIDS_tree_ncs = os.path.join(BIDSlike_folderpath, "sub-{:03}".format(patient_num), "ses-NcsNlx{:02}".format(run_num), "ieeg")
@@ -30,7 +32,7 @@ def path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, ta
 
     return(path_info_dict)
 
-def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = False):
+def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, proceed = False):
     ### Initialize variables
     electrodes_names_and_scales_matching_dict = {"electrode_name": [], "recording_scale": []}
     micro_names_list = []
@@ -52,7 +54,7 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
         is_tsv_matching_file = True
     else:
         is_tsv_matching_file = False
-        process = False
+        proceed = False
         print("The << Electrodes names and scales matching.tsv >> file that should be inside the Neuralynx ncs folder is missing. See example dataset provided with this program for more information.")
 
     if len(micro_idx_list)>=1:
@@ -90,16 +92,16 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
 
     ### Rename all the channel names in the containing folder
     for original_filname, renamed_filename in zip(ncs_filenames_list,ncs_renamed_list):
-        if process and ("macro" not in original_filname) and ("micro" not in original_filname):
+        if proceed and ("macro" not in original_filname) and ("micro" not in original_filname):
             os.rename(os.path.join(current_path, original_filname),os.path.join(current_path,renamed_filename))
             print("{} was changed to:    {}".format(original_filname,renamed_filename))
         else:
             print("{} was NOT changed to:    {}".format(original_filname,renamed_filename))
 
     ### Search or create tree structure
-    if process:
+    if proceed:
         if os.path.join(root, current_folder_name) != os.path.join(root,path_info_dict["BIDS_full_name"]):
-            os.rename(os.path.join(root, current_folder_name),os.path.join(root,path_info_dict["BIDS_full_name"]))
+            os.rename(os.path.join(root, current_folder_name), os.path.join(root,path_info_dict["BIDS_full_name"]))
         else:
             print("Folder name already exists. Overwrite = False.")
 
@@ -112,15 +114,46 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, process = Fa
     source = os.path.join(root, path_info_dict["BIDS_full_name"])
     destination = os.path.join(path_info_dict["BIDS_tree_ncs"], path_info_dict["BIDS_full_name"])
 
-    if process:
+    if proceed:
         if not os.path.exists(destination):
             shutil.move(source, destination)
+            write_BIDS_files(path_info_dict["BIDS_tree_ncs"])
         else:
             print("Folder already exists. Overwrite = False.")
 
     return(ncs_renamed_list, destination, is_tsv_matching_file)
 
-def rawdata_to_BIDSlike(current_path, path_info_dict, process = False):
+def write_BIDS_files(BIDS_tree, write = True):
+    ### Split path
+    path_components = []
+    path = BIDS_tree
+    path = os.path.normpath(path)
+    path = path.split(os.sep)
+    [path_components.append(_comp) for _comp in path if _comp]
+
+    ### Root part (level 1) of the BIDS directory
+    BIDS_depth = 5 # levels
+    full_path_depth = len(path_components) # levels
+    BIDS_root_position = full_path_depth - BIDS_depth + 2
+    BIDS_root_path = '/'.join(path_components[0:BIDS_root_position])
+    print("")
+    print(path_components)
+    print(BIDS_root_path)
+    BIDS_root_listdir = next(os.walk(BIDS_root_path))[1] #  (dirnames, filenames)
+    create_dataset_description_json(BIDS_root_path, write)
+    create_participants_json(BIDS_root_path, write)
+    create_participants_tsv(BIDS_root_path, BIDS_root_listdir, write)
+
+    ### Level 2 of the BIDS directory
+    create_session_tsv(BIDS_root_path, BIDS_root_listdir, write)
+
+    ### Level 3 of the BIDS directory
+    create_scans_tsv(BIDS_root_path, BIDS_root_listdir, write)
+
+    ### Level 5 of the BIDS directory (skip level 4, it is just always "ieeg" for the moment)
+    create_channels_tsv(BIDS_root_path, BIDS_root_listdir, write)
+
+def rawdata_to_BIDSlike(current_path, path_info_dict, proceed = False):
     ### Rename all the channel names in the containing folder
     ext = ".nrd"
     root = os.path.split(current_path)[0]
@@ -130,7 +163,7 @@ def rawdata_to_BIDSlike(current_path, path_info_dict, process = False):
 
     destination = os.path.join(path_info_dict["BIDS_tree_nrd"], renamed_filename)
 
-    if process:
+    if proceed:
         ### Rename file
         os.rename(current_path,renamed_filepath)
 
@@ -148,7 +181,7 @@ def rawdata_to_BIDSlike(current_path, path_info_dict, process = False):
 
     return(destination)
 
-def TRC_to_BIDSlike(current_path, path_info_dict, process = False):
+def TRC_to_BIDSlike(current_path, path_info_dict, proceed = False):
     ### Rename all the channel names in the containing folder
     ext = ".TRC"
     root = os.path.split(current_path)[0]
@@ -158,7 +191,7 @@ def TRC_to_BIDSlike(current_path, path_info_dict, process = False):
 
     destination = os.path.join(path_info_dict["BIDS_tree_trc"], renamed_filename)
 
-    if process:
+    if proceed:
         ### Rename file
         os.rename(current_path,renamed_filepath)
 
@@ -190,18 +223,18 @@ if __name__ == "__main__":
 
     BIDSlike_folderpath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\BIDS-like_Nlx"
 
-    ### Process
+    ### proceed
     #- Get path info and define BIDS-like path
-    path_info_dict = path_to_BIDSlikepath(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name)
+    path_info_dict = create_BIDS_name(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name)
 
     #- From current .ncs structure to BIDS-like .ncs structure
     ncs_folderpath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\69 JJ45\epifar jour 1"
-    ncs_renamed_list, ncs_destination, is_tsv_matching_file = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, process = True)
+    ncs_renamed_list, ncs_destination, is_tsv_matching_file = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, proceed = True)
 
     #- From current .nrd structure to BIDS-like .nrd structure
     rawdata_filepath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\69 JJ45\epifar j1.nrd"
-    rawdata_destination = rawdata_to_BIDSlike(rawdata_filepath, path_info_dict, process = True)
+    rawdata_destination = rawdata_to_BIDSlike(rawdata_filepath, path_info_dict, proceed = True)
 
     #- From current .TRC structure to BIDS-like .TRC structure
     TRC_filepath = r"\\srv-data\public\Simona\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\69 JJ45\EPIFARjour1.TRC"
-    TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
+    TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, proceed = True)

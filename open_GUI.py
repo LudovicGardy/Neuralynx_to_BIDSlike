@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 20 20:54:14 2019
-
-@author: gardy
+Creation date: 2022, January 27
+Author: L. Gardy
+E-mail: ludovic.gardy@cnrs.fr
+Encoding: UTF-8
 """
+
 import os
 import sys
 import json
 import numpy as np
 import traceback
+
 from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, QStyle, QErrorMessage,
     QTextEdit, QGridLayout, QApplication, QDialog, QPushButton,
     QVBoxLayout, QMainWindow, QMenu, QMessageBox, QSizePolicy, QAction,
     QComboBox, QHBoxLayout, QFrame, QCheckBox, QFileDialog, QTextBrowser)
 from PyQt5 import QtCore
 from PyQt5.QtCore import QCoreApplication
-import time
 
-#sys.path.append(r"G:\GardyL\Data_storage\EPIFAR_storage\BIDS_data\derivatives\Neuralynx_to_BIDSlike")
-#sys.path.append(r"C:\Users\GARDy\Desktop\Neuralynx_to_BIDSlike")
-from create_neuralynx_BIDSlike import (path_to_BIDSlikepath, ncs_to_BIDSlike, rawdata_to_BIDSlike, TRC_to_BIDSlike)
+from create_BIDS_tree import (create_BIDS_name, ncs_to_BIDSlike, rawdata_to_BIDSlike, TRC_to_BIDSlike)
 
 def messageBox_popup(title, text, icon, cancel_option = True):
     msgBox = QMessageBox()
@@ -331,7 +331,7 @@ class BIDSlike_creator_win(QWidget):
         ext = self.input_ext_edit.text().replace(".","")
 
         ### Get BIDS like folder path and file names
-        self.path_info_dict = path_to_BIDSlikepath(int(self.patient_edit.text()), int(self.sess_edit.text()), int(self.run_edit.text()), self.output_path_edit.text(), self.taskname_ComboBox.currentText())
+        self.path_info_dict = create_BIDS_name(int(self.patient_edit.text()), int(self.sess_edit.text()), int(self.run_edit.text()), self.output_path_edit.text(), self.taskname_ComboBox.currentText())
 
         ### Split path
         path_components = []
@@ -343,7 +343,7 @@ class BIDSlike_creator_win(QWidget):
 
         ### Display channels name and recording scale
         if ".ncs" in self.ext_ComboBox.currentText().lower():
-            ncs_renamed_list, self.destination, is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            ncs_renamed_list, self.destination, is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), proceed = False)
 
             self.description_textbox.append("\n#---------------------------\n# macro-EEG channels:\n#---------------------------")
             [self.description_textbox.append("# {}".format(chan_name.replace("macro",""))) for chan_name in ncs_renamed_list if "macro" in chan_name]
@@ -356,10 +356,10 @@ class BIDSlike_creator_win(QWidget):
 
         ### Set display_error_pathExists if path already exists. Will be displayed to the user later.
         elif ".nrd" in self.ext_ComboBox.currentText().lower():
-            self.destination = nrd_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            self.destination = nrd_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), proceed = False)
             if os.path.isfile(self.destination): self.display_error_pathExists = True
         elif ".trc" in self.ext_ComboBox.currentText().lower():
-            self.destination = trc_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = False)
+            self.destination = trc_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), proceed = False)
             if os.path.isfile(self.destination): self.display_error_pathExists = True
 
         ### Display BIDS path tree
@@ -388,8 +388,7 @@ class BIDSlike_creator_win(QWidget):
 
     def button_OK_fun(self):
 
-        if not self.path_info_dict:
-            self.button_check_fun()
+        self.button_check_fun()
 
         if not self.display_error_pathExists and not self.display_error_noTsvMatchingFile:
             _dest = self.destination.replace("\\","/")
@@ -418,13 +417,13 @@ class BIDSlike_creator_win(QWidget):
 
         try:
             if ".ncs" in self.ext_ComboBox.currentText().lower():
-                ncs_renamed_list, destination, is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), process = True)
-                self.description_textbox.append("\nNeuralynx [ncs] data processed. Data were sent to destination path.")
+                ncs_renamed_list, destination, is_tsv_matching_file = ncs_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, self.microID_edit.text(), proceed = True)
+                self.description_textbox.append("\nNeuralynx [ncs] data proceeded. Data were sent to destination path.")
             elif ".nrd" in self.ext_ComboBox.currentText().lower():
-                destination = rawdata_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
+                destination = rawdata_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, proceed = True)
                 self.description_textbox.append("\nNeuralynx [nrd] data processed. Data were sent to destination path.")
             elif ".trc" in self.ext_ComboBox.currentText().lower():
-                destination = TRC_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, process = True)
+                destination = TRC_to_BIDSlike(self.input_path_edit.text(), self.path_info_dict, proceed = True)
                 self.description_textbox.append("\nNeuralynx [trc] data processed. Data were sent to destination path.")
 
             self.displayConfirm_and_resetInputPath()
