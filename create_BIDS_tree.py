@@ -117,16 +117,16 @@ def ncs_to_BIDSlike(current_path, path_info_dict, micro_identifier, proceed = Fa
     if proceed:
         if not os.path.exists(destination):
             shutil.move(source, destination)
-            write_BIDS_files(path_info_dict["BIDS_tree_ncs"])
+            write_BIDS_files(path_info_dict, format = "ncs")
         else:
             print("Folder already exists. Overwrite = False.")
 
     return(ncs_renamed_list, destination, is_tsv_matching_file)
 
-def write_BIDS_files(BIDS_tree, write = True):
+def write_BIDS_files(path_info_dict, format, write = True):
     ### Split path
     path_components = []
-    path = BIDS_tree
+    path = path_info_dict[f"BIDS_tree_{format.lower()}"]
     path = os.path.normpath(path)
     path = path.split(os.sep)
     [path_components.append(_comp) for _comp in path if _comp]
@@ -136,10 +136,8 @@ def write_BIDS_files(BIDS_tree, write = True):
     full_path_depth = len(path_components) # levels
     BIDS_root_position = full_path_depth - BIDS_depth + 2
     BIDS_root_path = '/'.join(path_components[0:BIDS_root_position])
-    print("")
-    print(path_components)
-    print(BIDS_root_path)
     BIDS_root_listdir = next(os.walk(BIDS_root_path))[1] #  (dirnames, filenames)
+
     create_dataset_description_json(BIDS_root_path, write)
     create_participants_json(BIDS_root_path, write)
     create_participants_tsv(BIDS_root_path, BIDS_root_listdir, write)
@@ -151,7 +149,8 @@ def write_BIDS_files(BIDS_tree, write = True):
     create_scans_tsv(BIDS_root_path, BIDS_root_listdir, write)
 
     ### Level 5 of the BIDS directory (skip level 4, it is just always "ieeg" for the moment)
-    create_channels_tsv(BIDS_root_path, BIDS_root_listdir, write)
+    json_level5_path, foldername_level4, channels_dict = create_channels_tsv(BIDS_root_path, BIDS_root_listdir, write)
+    create_info_json(json_level5_path, foldername_level4, format, write)
 
 def rawdata_to_BIDSlike(current_path, path_info_dict, proceed = False):
     ### Rename all the channel names in the containing folder

@@ -32,11 +32,13 @@ def create_dataset_description_json(BIDS_root_path, write = False):
 
     output_filepath = os.path.join(BIDS_root_path, "dataset_description.json")
 
-    if write:
+    if write and not os.path.isfile(output_filepath):
         json_output = json.dumps(dataset_description_json, indent=4)
         with open(output_filepath, 'w') as fid:
             fid.write(json_output)
             fid.write('\n')
+    else:
+        print("This path already exists. Nothing will happen (overwrite = False).")
 
     return(dataset_description_json, output_filepath)
 
@@ -84,15 +86,17 @@ def create_participants_json(BIDS_root_path, write = False):
 
     output_filepath = os.path.join(BIDS_root_path, "participants.json")
 
-    if write:
+    if write and not os.path.isfile(output_filepath):
         json_output = json.dumps(participants_json, indent=4)
         with open(output_filepath, 'w') as fid:
             fid.write(json_output)
             fid.write('\n')
+    else:
+        print("This path already exists. Nothing will happen (overwrite = False).")
 
     return(participants_json, output_filepath)
 
-def create_info_json():
+def create_info_json(json_level5_path, foldername_level4, format, write = False, **kwargs):
     '''
     ---------------------------------------------------------------
     dest: BIDS_root/sub-xxx/sess-xx/ieeg
@@ -119,14 +123,17 @@ def create_info_json():
     }
     '''
 
+    if "ncs" in format or "nrd" in format:
+        manufacturer = "Neuralynx"
+
     info_json = {
-        "TaskName": "",
+        "TaskName": manufacturer,
         "Manufacturer": "",
         "PowerLineFrequency": np.nan,
         "SamplingFrequency": np.nan,
         "SoftwareFilters": "n/a",
         "RecordingDuration": np.nan,
-        "RecordingType": "",
+        "RecordingType": "continuous",
         "EEGReference": "n/a",
         "EEGGround": "n/a",
         "EEGPlacementScheme": "n/a",
@@ -137,6 +144,15 @@ def create_info_json():
         "MiscChannelCount": np.nan,
         "TriggerChannelCount": np.nan
     }
+
+    output_filepath = os.path.join(json_level5_path, f"{foldername_level4}.json")
+    if write and not os.path.isfile(output_filepath):
+        json_output = json.dumps(info_json, indent=4)
+        with open(output_filepath, 'w') as fid:
+            fid.write(json_output)
+            fid.write('\n')
+    else:
+        print("This path already exists. Nothing will happen (overwrite = False).")
 
     return(info_json)
 
@@ -173,9 +189,11 @@ def create_participants_tsv(BIDS_root_path, BIDS_root_listdir, write = False):
             participants_dict["sex"].append("n/a")
 
     output_filepath = os.path.join(BIDS_root_path, "participants.tsv")
-    if write:
+    if write and not os.path.isfile(output_filepath):
         df = pd.DataFrame.from_dict(participants_dict)
         df.to_csv(output_filepath, sep="\t", index = False)
+    else:
+        print("This path already exists. Nothing will happen (overwrite = False).")
 
     return(participants_dict, output_filepath)
 
@@ -219,9 +237,11 @@ def create_session_tsv(BIDS_root_path, BIDS_root_listdir, write = False):
                     session_dict["Comment"].append("n/a")
 
             output_filepath = os.path.join(json_level2_path, f"{foldername_root}_sessions.tsv")
-            if write:
+            if write and not os.path.isfile(output_filepath):
                 df = pd.DataFrame.from_dict(session_dict)
                 df.to_csv(output_filepath, sep="\t", index = False)
+            else:
+                print("This path already exists. Nothing will happen (overwrite = False).")
 
     return(session_dict)
 
@@ -267,9 +287,11 @@ def create_scans_tsv(BIDS_root_path, BIDS_root_listdir, write = False):
                         scans_dict["acq_time"].append("n/a")
 
                     output_filepath = os.path.join(json_level3_path, f"{foldername_root}_{foldername_level2}_scans.tsv")
-                    if write:
+                    if write and not os.path.isfile(output_filepath):
                         df = pd.DataFrame.from_dict(scans_dict)
                         df.to_csv(output_filepath, sep="\t", index = False)
+                    else:
+                        print("This path already exists. Nothing will happen (overwrite = False).")
 
     return(scans_dict)
 
@@ -334,11 +356,13 @@ def create_channels_tsv(BIDS_root_path, BIDS_root_listdir, write = False):
                             channels_dict["status"].append("n/a")
 
                         output_filepath = os.path.join(json_level5_path, f"{foldername_level4}.tsv")
-                        if write:
+                        if write and not os.path.isfile(output_filepath):
                             df = pd.DataFrame.from_dict(channels_dict)
                             df.to_csv(output_filepath, sep="\t", index = False)
+                        else:
+                            print("This path already exists. Nothing will happen (overwrite = False).")
 
-    return(channels_dict)
+    return(json_level5_path, foldername_level4, channels_dict)
 
 
 def create_events_tsv():
