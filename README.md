@@ -33,10 +33,10 @@ h	macro
 ```
 
 # 3. Procedure example
-User can use either the script directly (create_neuralynx_BIDSlike.py), or through the GUI provided with this program (open_GUI.py).
+User can use either the script directly (_**create_BIDS_tree.py"**_), or through the GUI provided with this program (_**start_app"**_).
 
 ## 3.1 Example using the script
-User can use the program by simply run the script "create_neuralynx_BIDSlike", but it will ask some "coding", like modifying the paths, the patient/session/run numbers, the task name and the micro_identifier. For a no-coding procedure, user can use the GUI provided with this program.
+User can use the program by simply running the script _**"create_BIDS_tree"**_. User will need to modify the paths, the patient/session/run numbers, the task name and the micro_identifier. For a no-coding procedure, user can use the GUI provided with this program.
 
 ```
 ### Set parameters
@@ -67,7 +67,7 @@ TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 ```
 
 ## 3.2 Example using the GUI
-To run the program, user can either open the script "open_GUI.py" using a python IDE, or simply double click the "start_app" file, that should automatically launch the GUI.
+To run the program, user can either open the script "_**open_GUI.py**_" using a python IDE, or simply double click the "_**start_app**_" file, that should automatically launch the GUI.
 
 ![](illustrations/open_GUI.png)
 
