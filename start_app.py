@@ -19,7 +19,8 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, QStyle, QErrorMessage,
 from PyQt5 import QtCore
 from PyQt5.QtCore import QCoreApplication
 
-from create_BIDS_tree import (create_BIDS_name, ncs_to_BIDSlike, rawdata_to_BIDSlike, TRC_to_BIDSlike)
+from BIDS_like_converter.main.create_BIDS_tree import (create_BIDS_name, ncs_to_BIDSlike, rawdata_to_BIDSlike, TRC_to_BIDSlike)
+from BIDS_like_converter.config_file import get_config
 
 def messageBox_popup(title, text, icon, cancel_option = True):
     msgBox = QMessageBox()
@@ -79,7 +80,7 @@ class BIDSlike_creator_win(QWidget):
         self.run_edit = QLineEdit()
         self.run_edit.setText("00")
 
-        json_dict = json.load(open("config_file.json"))
+        json_dict = get_config()
         possible_tasknames = json_dict["possible_tasknames"]
         possible_ext = json_dict["possible_ext"]
         possible_tasknames.append("Other")

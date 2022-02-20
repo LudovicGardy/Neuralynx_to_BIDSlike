@@ -12,7 +12,7 @@ import numpy as np
 import json
 import sys
 
-from create_BIDS_files import (create_dataset_description_json, create_participants_json, create_info_json, create_participants_tsv, create_session_tsv, create_scans_tsv, create_channels_tsv, create_events_tsv)
+from BIDS_like_converter.main.create_BIDS_files import (create_dataset_description_json, create_participants_json, create_info_json, create_participants_tsv, create_session_tsv, create_scans_tsv, create_channels_tsv, create_events_tsv)
 
 def create_BIDS_name(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name):
     ### Setting up the different elements of the BIDS-like tree
@@ -212,12 +212,12 @@ def TRC_to_BIDSlike(current_path, path_info_dict, proceed = False):
 
 if __name__ == "__main__":
 
-    root_path = r"F:\GardyL\Python\Neuralynx_to_BIDSlike"
+    root_path = r"F:\GardyL\Python\BIDS_like_converter"
     sys.path.append(root_path)
     from create_BIDS_files import (create_dataset_description_json, create_participants_json, create_info_json, create_participants_tsv, create_session_tsv, create_scans_tsv, create_channels_tsv, create_events_tsv)
 
     ### Load config file
-    config_file_path = r"F:\GardyL\Python\Neuralynx_to_BIDSlike\config_file.json"
+    config_file_path = r"F:\GardyL\Python\BIDS_like_converter\config_file.json"
     json_dict = json.load(open(config_file_path))
     possible_tasknames = json_dict["possible_tasknames"]
     print(f"Possible task names: {possible_tasknames}")
@@ -230,20 +230,20 @@ if __name__ == "__main__":
     task_name = "Stimic"
     micro_identifier = "t"
 
-    BIDSlike_folderpath = r"F:\GardyL\Python\Neuralynx_to_BIDSlike\srv-data-example\BIDSlike_database"
+    BIDSlike_folderpath = r"F:\GardyL\Python\BIDS_like_converter\srv-data-example\BIDSlike_database"
 
     ### proceed
     #- Get path info and define BIDS-like path
     path_info_dict = create_BIDS_name(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name)
 
     #- From current .ncs structure to BIDS-like .ncs structure
-    ncs_folderpath = r"F:\GardyL\Python\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\example 2\epifar jour 1"
+    ncs_folderpath = r"F:\GardyL\Python\BIDS_like_converter\srv-data-example\donnees patients\example 2\epifar jour 1"
     ncs_renamed_list, ncs_destination, is_tsv_matching_file = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, proceed = True)
 
     #- From current .nrd structure to BIDS-like .nrd structure
-    rawdata_filepath = r"F:\GardyL\Python\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\example 2\epifar j1.nrd"
+    rawdata_filepath = r"F:\GardyL\Python\BIDS_like_converter\srv-data-example\donnees patients\example 2\epifar j1.nrd"
     rawdata_destination = rawdata_to_BIDSlike(rawdata_filepath, path_info_dict, proceed = True)
 
     #- From current .TRC structure to BIDS-like .TRC structure
-    TRC_filepath = r"F:\GardyL\Python\Neuralynx_to_BIDSlike\srv-data-example\donnees patients\example 2\EPIFARjour1.TRC"
+    TRC_filepath = r"F:\GardyL\Python\BIDS_like_converter\srv-data-example\donnees patients\example 2\EPIFARjour1.TRC"
     TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, proceed = True)
