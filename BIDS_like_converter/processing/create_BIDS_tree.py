@@ -12,7 +12,7 @@ import numpy as np
 import json
 import sys
 
-from BIDS_like_converter.main.create_BIDS_files import (create_dataset_description_json, create_participants_json, create_info_json, create_participants_tsv, create_session_tsv, create_scans_tsv, create_channels_tsv, create_events_tsv)
+from BIDS_like_converter.processing.create_BIDS_files import (create_dataset_description_json, create_participants_json, create_info_json, create_participants_tsv, create_session_tsv, create_scans_tsv, create_channels_tsv, create_events_tsv)
 
 def create_BIDS_name(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name):
     ### Setting up the different elements of the BIDS-like tree
