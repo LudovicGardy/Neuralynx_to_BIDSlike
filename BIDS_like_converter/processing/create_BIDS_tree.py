@@ -12,8 +12,9 @@ import numpy as np
 import json
 import sys
 
-from BIDS_like_converter.processing.create_BIDS_files import (create_dataset_description_json, create_participants_json, create_info_json, create_participants_tsv, create_session_tsv, create_scans_tsv, create_channels_tsv, create_events_tsv)
+from BIDS_like_converter.processing import create_BIDS_files
 
+__all__ = ["create_BIDS_name", "ncs_to_BIDSlike", "write_BIDS_files", "rawdata_to_BIDSlike", "TRC_to_BIDSlike"]
 
 def create_BIDS_name(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name):
     ### Setting up the different elements of the BIDS-like tree
@@ -146,19 +147,19 @@ def write_BIDS_files(path_info_dict, format, write=True):
 
     BIDS_root_listdir = next(os.walk(BIDS_root_path))[1]  # (dirnames, filenames)
 
-    create_dataset_description_json(BIDS_root_path, write)
-    create_participants_json(BIDS_root_path, write)
-    create_participants_tsv(BIDS_root_path, BIDS_root_listdir, write)
+    create_BIDS_files.create_dataset_description_json(BIDS_root_path, write)
+    create_BIDS_files.create_participants_json(BIDS_root_path, write)
+    create_BIDS_files.create_participants_tsv(BIDS_root_path, BIDS_root_listdir, write)
 
     ### Level 2 of the BIDS directory
-    create_session_tsv(BIDS_root_path, BIDS_root_listdir, write)
+    create_BIDS_files.create_session_tsv(BIDS_root_path, BIDS_root_listdir, write)
 
     ### Level 3 of the BIDS directory
-    create_scans_tsv(BIDS_root_path, BIDS_root_listdir, write)
+    create_BIDS_files.create_scans_tsv(BIDS_root_path, BIDS_root_listdir, write)
 
     ### Level 5 of the BIDS directory (skip level 4, it is just always "ieeg" for the moment)
-    json_level5_path, foldername_level4, channels_dict = create_channels_tsv(BIDS_root_path, BIDS_root_listdir, write)
-    create_info_json(json_level5_path, foldername_level4, format, write)
+    json_level5_path, foldername_level4, channels_dict = create_BIDS_files.create_channels_tsv(BIDS_root_path, BIDS_root_listdir, write)
+    create_BIDS_files.create_info_json(json_level5_path, foldername_level4, format, write)
 
 
 def rawdata_to_BIDSlike(current_path, path_info_dict, proceed=False):
@@ -221,12 +222,10 @@ def TRC_to_BIDSlike(current_path, path_info_dict, proceed=False):
 
 if __name__ == "__main__":
 
-    root_path = r"F:\GardyL\Python\BIDS_like_converter"
-    sys.path.append(root_path)
-    from create_BIDS_files import (create_dataset_description_json, create_participants_json, create_info_json, create_participants_tsv, create_session_tsv, create_scans_tsv, create_channels_tsv, create_events_tsv)
+    from create_BIDS_files import *
 
     ### Load config file
-    config_file_path = r"F:\GardyL\Python\BIDS_like_converter\config_file.json"
+    config_file_path = r"BIDS_like_converter\config_file.json"
     json_dict = json.load(open(config_file_path))
     possible_tasknames = json_dict["possible_tasknames"]
     print(f"Possible task names: {possible_tasknames}")
@@ -239,20 +238,19 @@ if __name__ == "__main__":
     task_name = "Stimic"
     micro_identifier = "t"
 
-    BIDSlike_folderpath = r"F:\GardyL\Python\BIDS_like_converter\srv-data-example\BIDSlike_database"
+    BIDSlike_folderpath = r"BIDS_like_converter\srv-data-example\BIDSlike_database"
 
-    ### proceed
     #- Get path info and define BIDS-like path
     path_info_dict = create_BIDS_name(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name)
 
     #- From current .ncs structure to BIDS-like .ncs structure
-    ncs_folderpath = r"F:\GardyL\Python\BIDS_like_converter\srv-data-example\donnees patients\example 2\epifar jour 1"
+    ncs_folderpath = r"BIDS_like_converter\srv-data-example\donnees patients\example 2\epifar jour 1"
     ncs_renamed_list, ncs_destination, is_tsv_matching_file = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, proceed=True)
 
     #- From current .nrd structure to BIDS-like .nrd structure
-    rawdata_filepath = r"F:\GardyL\Python\BIDS_like_converter\srv-data-example\donnees patients\example 2\epifar j1.nrd"
+    rawdata_filepath = r"BIDS_like_converter\srv-data-example\donnees patients\example 2\epifar j1.nrd"
     rawdata_destination = rawdata_to_BIDSlike(rawdata_filepath, path_info_dict, proceed=True)
 
     #- From current .TRC structure to BIDS-like .TRC structure
-    TRC_filepath = r"F:\GardyL\Python\BIDS_like_converter\srv-data-example\donnees patients\example 2\EPIFARjour1.TRC"
+    TRC_filepath = r"BIDS_like_converter\srv-data-example\donnees patients\example 2\EPIFARjour1.TRC"
     TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, proceed=True)

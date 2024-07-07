@@ -10,6 +10,18 @@ import os
 import numpy as np
 import pandas as pd
 
+### When * is used, the following functions will be imported
+__all__ = [
+    'create_dataset_description_json', 
+    'create_participants_json', 
+    'create_info_json', 
+    'create_participants_tsv', 
+    'create_session_tsv', 
+    'create_scans_tsv', 
+    'create_channels_tsv', 
+    'create_events_tsv'
+]
+
 ### Create json files
 def create_dataset_description_json(BIDS_root_path, write = False):
     '''
@@ -366,4 +378,4 @@ def create_channels_tsv(BIDS_root_path, BIDS_root_listdir, write = False):
 
 
 def create_events_tsv():
-    pass
+    pass # To develop
