@@ -1,7 +1,10 @@
 ### Ignore these folders
-__pycache__/
 .vs/
+.venv/
+.mypy_cache/
+.idea/
 
 ### Ignore these files
 test.py
-start_app_LG
+test.ipynb
+.DS_Store
