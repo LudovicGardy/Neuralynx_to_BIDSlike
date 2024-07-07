@@ -9,7 +9,7 @@ from PyQt6.QtCore import QCoreApplication
 from PyQt6.QtWidgets import QApplication
 import sys
 
-from BIDS_like_converter.GUI.main_GUI import BIDSlike_creator_win
+from BIDS_like_converter.GUI.main_GUI import BIDSlikeCreatorWin
 
 if __name__ == "__main__":
 
@@ -19,5 +19,5 @@ if __name__ == "__main__":
         app = QApplication(sys.argv)
 
     # run
-    mywindow = BIDSlike_creator_win()
+    mywindow = BIDSlikeCreatorWin()
     sys.exit(app.exec())
