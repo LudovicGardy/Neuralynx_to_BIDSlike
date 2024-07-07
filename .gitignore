@@ -1,8 +1,10 @@
 ### Ignore these folders
+__pycache__
 .vs/
 .venv/
 .mypy_cache/
 .idea/
+start_app_LG.bat
 
 ### Ignore these files
 test.py
