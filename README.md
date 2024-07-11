@@ -1,4 +1,6 @@
-# 1. BIDS-like structure for Neuralynx hybrid data
+# BIDS-like structure for Neuralynx hybrid data
+
+## Description
 This program allows the transformation of clinical data acquired with the Neuralynx (research macro- and micro-EEG) and Micromed (clinical macro-EEG) systems to meet the BIDS specifications in terms of tree structure and nomenclature. The term BIDS-like is used to indicate that only the BIDS tree structure and nomenclature are used for the moment, without the formats being BIDS-compatible (e.g. .ncs are not BIDS-compatible) nor the .json and .tsv files necessary for a complete BIDS structure being present.
 
 Several major steps follow:
@@ -17,10 +19,21 @@ This adaptation of the BIDS structure was made to take into account the *hybrid*
 
 ![](illustrations/BIDS-like_SEEG.png)
 
-# 2. User need to fill this file for a new usage
+## Installation
+
+### Prerequisites
+
+- Python 3.11
+- Python libraries: see requirements.txt
+
+## Usage
+
+### User need to fill this file for a new usage
+
 A file named _**Electrode names and scales matching.tsv**_ must be present in the folder containing the channel data (.ncs). This file links the electrode names to the recording scale. If you are using conventional electrodes, the scale will always be *macro*. If you use hybrid electrodes, you will have to distinguish between the different types of electrodes by associating the label *macro* or *micro*. An example is available in the dataset proposed here.
 
-## 2.1. Electrode names and scales matching (.tsv) example
+#### Electrode names and scales matching (.tsv) example
+
 ```
 electrode_name	recording_scale
 ttb'	micro
@@ -32,13 +45,15 @@ of	macro
 h	macro
 ```
 
-# 3. Procedure example
+## Procedure example
+
 User can use either the script directly (_**create_BIDS_tree.py"**_), or through the GUI provided with this program (_**start_app"**_).
 
-## 3.1 Example using the script
+### Example using the script
+
 User can use the program by simply running the script _**"create_BIDS_tree"**_. User will need to modify the paths, the patient/session/run numbers, the task name and the micro_identifier. For a no-coding procedure, user can use the GUI provided with this program.
 
-```
+```python
 ### Set parameters
 patient_num = 69
 sess_num = 1
@@ -66,17 +81,19 @@ TRC_filepath = r"folderpath/filename.TRC"
 TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 ```
 
-## 3.2 Example using the GUI
+### Example using the GUI
+
 To run the program, user can either open the script "_**start_app.py**_" using the terminal, or simply double click the "_**start_app**_" file, that should automatically launch the GUI.
 
 ![](illustrations/open_GUI.png)
 
-# 4. Requirements
-```
-pip install -r requirements.txt
-```
+## References
 
-# 5. References
 [1] Appelhoff, S., Sanderson, M., Brooks, T. L., van Vliet, M., Quentin, R., Holdgraf, C., Chaumon, M., Mikulan, E., Tavabi, K., Höchenberger, R., et al. (2019). Mne-bids : Organizing electrophysiological data into the bids format and facilitating their analysis. The Journal of Open Source Software, 4(44).
 
 [2] Holdgraf, C., Appelhoff, S., Bickel, S., Bouchard, K., D’Ambrosio, S., David, O., Devinsky, O., Dichter, B., Flinker, A., Foster, B. L., et al. (2019). ieeg-bids, extending the brain imaging data structure specification to human intracranial electrophysiology. Scientific data, 6(1) :1–6.
+
+## Author
+
+- LinkedIn: [Ludovic Gardy](https://www.linkedin.com/in/ludovic-gardy/)
+- Doctoral thesis: [PDF](http://thesesups.ups-tlse.fr/5164/1/2021TOU30190.pdf)
