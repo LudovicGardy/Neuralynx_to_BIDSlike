@@ -16,9 +16,9 @@ from PyQt6.QtWidgets import (QWidget, QLabel, QLineEdit, QErrorMessage,
                              QComboBox, QHBoxLayout, QFrame, QFileDialog, QTextBrowser)
 from PyQt6 import QtCore, QtGui
 
-from BIDS_like_converter.processing.create_BIDS_tree import (create_BIDS_name, ncs_to_BIDSlike, rawdata_to_BIDSlike, TRC_to_BIDSlike)
-from BIDS_like_converter.config_file import get_config, get_path
-from BIDS_like_converter.messageBox_popup import messageBox_popup
+from modules.processing.create_BIDS_tree import (create_BIDS_name, ncs_to_BIDSlike, rawdata_to_BIDSlike, TRC_to_BIDSlike)
+from modules.config_file import get_config, get_path
+from modules.messageBox_popup import messageBox_popup
 
 path_dict = get_path()
 

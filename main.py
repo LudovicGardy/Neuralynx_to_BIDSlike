@@ -9,7 +9,7 @@ from PyQt6.QtCore import QCoreApplication
 from PyQt6.QtWidgets import QApplication
 import sys
 
-from BIDS_like_converter.GUI.main_GUI import BIDSlikeCreatorWin
+from modules.GUI.main_GUI import BIDSlikeCreatorWin
 
 if __name__ == "__main__":
 
@@ -21,3 +21,6 @@ if __name__ == "__main__":
     # run
     mywindow = BIDSlikeCreatorWin()
     sys.exit(app.exec())
+
+### Command to activate .venv in terminal
+# source .venv/bin/activate

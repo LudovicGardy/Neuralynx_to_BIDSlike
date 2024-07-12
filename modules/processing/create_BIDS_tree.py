@@ -12,7 +12,7 @@ import numpy as np
 import json
 import sys
 
-from BIDS_like_converter.processing import create_BIDS_files
+from modules.processing import create_BIDS_files
 
 __all__ = ["create_BIDS_name", "ncs_to_BIDSlike", "write_BIDS_files", "rawdata_to_BIDSlike", "TRC_to_BIDSlike"]
 
@@ -225,7 +225,7 @@ if __name__ == "__main__":
     from create_BIDS_files import *
 
     ### Load config file
-    config_file_path = r"BIDS_like_converter\config_file.json"
+    config_file_path = r"modules\config_file.json"
     json_dict = json.load(open(config_file_path))
     possible_tasknames = json_dict["possible_tasknames"]
     print(f"Possible task names: {possible_tasknames}")
@@ -238,19 +238,19 @@ if __name__ == "__main__":
     task_name = "Stimic"
     micro_identifier = "t"
 
-    BIDSlike_folderpath = r"BIDS_like_converter\srv-data-example\BIDSlike_database"
+    BIDSlike_folderpath = r"modules\srv-data-example\BIDSlike_database"
 
     #- Get path info and define BIDS-like path
     path_info_dict = create_BIDS_name(patient_num, sess_num, run_num, BIDSlike_folderpath, task_name)
 
     #- From current .ncs structure to BIDS-like .ncs structure
-    ncs_folderpath = r"BIDS_like_converter\srv-data-example\donnees patients\example 2\epifar jour 1"
+    ncs_folderpath = r"modules\srv-data-example\donnees patients\example 2\epifar jour 1"
     ncs_renamed_list, ncs_destination, is_tsv_matching_file = ncs_to_BIDSlike(ncs_folderpath, path_info_dict, micro_identifier, proceed=True)
 
     #- From current .nrd structure to BIDS-like .nrd structure
-    rawdata_filepath = r"BIDS_like_converter\srv-data-example\donnees patients\example 2\epifar j1.nrd"
+    rawdata_filepath = r"modules\srv-data-example\donnees patients\example 2\epifar j1.nrd"
     rawdata_destination = rawdata_to_BIDSlike(rawdata_filepath, path_info_dict, proceed=True)
 
     #- From current .TRC structure to BIDS-like .TRC structure
-    TRC_filepath = r"BIDS_like_converter\srv-data-example\donnees patients\example 2\EPIFARjour1.TRC"
+    TRC_filepath = r"modules\srv-data-example\donnees patients\example 2\EPIFARjour1.TRC"
     TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, proceed=True)

@@ -30,7 +30,13 @@ This adaptation of the BIDS structure was made to take into account the *hybrid*
 
 ## Usage
 
-### User need to fill this file for a new usage
+User can use either the script directly (_**create_BIDS_tree.py"**_), or through the GUI provided with this program (_**main"**_).
+
+```python
+python main.py  # opens the GUI
+```
+
+### For any new usage on other datasets
 
 A file named _**Electrode names and scales matching.tsv**_ must be present in the folder containing the channel data (.ncs). This file links the electrode names to the recording scale. If you are using conventional electrodes, the scale will always be *macro*. If you use hybrid electrodes, you will have to distinguish between the different types of electrodes by associating the label *macro* or *micro*. An example is available in the dataset proposed here.
 
@@ -47,11 +53,7 @@ of	macro
 h	macro
 ```
 
-## Procedure example
-
-User can use either the script directly (_**create_BIDS_tree.py"**_), or through the GUI provided with this program (_**start_app"**_).
-
-### Example using the script
+#### Example using the script
 
 User can use the program by simply running the script _**"create_BIDS_tree"**_. User will need to modify the paths, the patient/session/run numbers, the task name and the micro_identifier. For a no-coding procedure, user can use the GUI provided with this program.
 
@@ -83,9 +85,9 @@ TRC_filepath = r"folderpath/filename.TRC"
 TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 ```
 
-### Example using the GUI
+## Example using the GUI
 
-To run the program, user can either open the script "_**start_app.py**_" using the terminal, or simply double click the "_**start_app**_" file, that should automatically launch the GUI.
+To run the program, user can either open the script "_**main.py**_" using the terminal, or simply double click the "_**main.bat**_" file, that should automatically launch the GUI.
 
 ![](images/image2.png)
 

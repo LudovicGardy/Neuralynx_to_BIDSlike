@@ -17,7 +17,7 @@ def get_path():
     path_dict = {
 
         "root" : root,
-        "icon_path" : os.path.join(root, "BIDS_like_converter", "static", "icones")
+        "icon_path" : os.path.join(root, "modules", "static", "icones")
     }
 
     return path_dict
