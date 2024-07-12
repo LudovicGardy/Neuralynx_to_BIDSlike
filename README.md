@@ -1,7 +1,9 @@
-# BIDS-like structure for Neuralynx hybrid data
+# Halyzia© / Ladybird Data Converter: from Neuralynx to BIDS compatible architecture and formats
 
 ## Description
-This program allows the transformation of clinical data acquired with the Neuralynx (research macro- and micro-EEG) and Micromed (clinical macro-EEG) systems to meet the BIDS specifications in terms of tree structure and nomenclature. The term BIDS-like is used to indicate that only the BIDS tree structure and nomenclature are used for the moment, without the formats being BIDS-compatible (e.g. .ncs are not BIDS-compatible) nor the .json and .tsv files necessary for a complete BIDS structure being present.
+This program demonstrates part of the processing performed by Ladybird / Halyzia©, a software for the automatic detection of fast-ripples (FRs) in epilepsy [[L. Gardy, doctoral thesis](https://data.inpi.fr/brevets/FR3128111)], [[Brevet: FR3128111](http://thesesups.ups-tlse.fr/5164/1/2021TOU30190.pdf)].
+
+The specific feature of the software presented here allows the transformation of clinical data acquired with the Neuralynx (research macro- and micro-EEG) and Micromed (clinical macro-EEG) systems to meet the BIDS specifications in terms of tree structure and nomenclature. The term BIDS-like is used to indicate that only the BIDS tree structure and nomenclature are used for the moment, without the formats being BIDS-compatible (e.g. .ncs are not BIDS-compatible) nor the .json and .tsv files necessary for a complete BIDS structure being present.
 
 Several major steps follow:
 1. A dictionary is created, which references various information related to the BIDS-like tree. It will be used by the other functions (2,3,4) to generate the BIDS-like tree structure and the names of the folders, sub-folders and files.
@@ -9,7 +11,7 @@ Several major steps follow:
 3. A function that takes as input the path of the .nrd file (*Neuralynx* raw data) will change the name of the file to match the BIDS nomenclature. The .nrd file is then removed (cut) from its original position to the tree (folder) of our BIDS-like structure (pasted).
 4. A function that takes as input the path of the .TRC (*Micromed* raw data) file will change the name of the file to match the BIDS nomenclature. The .TRC file is then removed (cut) from its original position to join the tree structure (folder) of our BIDS-like structure (pasted).
 
-The user can perform these actions one after the other or separately and individually. The only elements to be modified by the user are :
+User can perform these actions one after the other or separately and individually. The only elements to be modified by the user are :
 - The numbers of: patient, session, run,
 - The name of the task,
 - The symbol (letter[s]) used to characterise the microelectrodes (e.g. *tt* or *t*),
@@ -17,7 +19,7 @@ The user can perform these actions one after the other or separately and individ
 
 This adaptation of the BIDS structure was made to take into account the *hybrid* aspect of our intracerebral electrodes.
 
-![](illustrations/BIDS-like_SEEG.png)
+![](images/image1.png)
 
 ## Installation
 
@@ -85,7 +87,7 @@ TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 
 To run the program, user can either open the script "_**start_app.py**_" using the terminal, or simply double click the "_**start_app**_" file, that should automatically launch the GUI.
 
-![](illustrations/open_GUI.png)
+![](images/image2.png)
 
 ## References
 
@@ -97,3 +99,7 @@ To run the program, user can either open the script "_**start_app.py**_" using t
 
 - LinkedIn: [Ludovic Gardy](https://www.linkedin.com/in/ludovic-gardy/)
 - Doctoral thesis: [PDF](http://thesesups.ups-tlse.fr/5164/1/2021TOU30190.pdf)
+
+## Note
+
+For patent reasons, access to the code is partly restricted. Please contact the author for more information at [ludovic.gardy@gmail.com](mailto:ludovic.gardy@gmail.com).
