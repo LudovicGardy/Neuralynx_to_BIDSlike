@@ -1,9 +1,7 @@
 # Halyzia© / Ladybird Data Converter: from Neuralynx to BIDS compatible architecture and formats
 
 ## Description
-This program demonstrates part of the processing performed by Ladybird / Halyzia©, a software for the automatic detection of fast-ripples (FRs) in epilepsy [[L. Gardy, doctoral thesis](https://data.inpi.fr/brevets/FR3128111)], [[Brevet: FR3128111](http://thesesups.ups-tlse.fr/5164/1/2021TOU30190.pdf)].
-
-The specific feature of the software presented here allows the transformation of clinical data acquired with the Neuralynx (research macro- and micro-EEG) and Micromed (clinical macro-EEG) systems to meet the BIDS specifications in terms of tree structure and nomenclature. The term BIDS-like is used to indicate that only the BIDS tree structure and nomenclature are used for the moment, without the formats being BIDS-compatible (e.g. .ncs are not BIDS-compatible) nor the .json and .tsv files necessary for a complete BIDS structure being present.
+Halyzia©, also known as Ladybird, is a sophisticated software designed for the automatic detection of fast-ripples (FRs) in epilepsy, as described in the [doctoral thesis of L. Gardy](https://data.inpi.fr/brevets/FR3128111) and patented under [Brevet: FR3128111](http://thesesups.ups-tlse.fr/5164/1/2021TOU30190.pdf). This repository showcases a component of Halyzia© that is focused on the transformation of clinical data acquired with the Neuralynx (research macro- and micro-EEG) and Micromed (clinical macro-EEG) systems to meet the BIDS specifications in terms of tree structure and nomenclature. The term BIDS-like is used to indicate that only the BIDS tree structure and nomenclature are used for the moment, without the formats being BIDS-compatible (e.g. .ncs are not BIDS-compatible) nor the .json and .tsv files necessary for a complete BIDS structure being present.
 
 Several major steps follow:
 1. A dictionary is created, which references various information related to the BIDS-like tree. It will be used by the other functions (2,3,4) to generate the BIDS-like tree structure and the names of the folders, sub-folders and files.
@@ -30,11 +28,16 @@ This adaptation of the BIDS structure was made to take into account the *hybrid*
 
 ## Usage
 
-User can use either the script directly (_**create_BIDS_tree.py**_), or through the GUI provided with this program (_**main.py**_).
+### Running the application
 
-```python
-python main.py  # opens the GUI
-```
+User can use either the script directly (_**create_BIDS_tree.py**_), or through the GUI provided with this program.
+
+\`\`\`sh
+python main.py  # Launches the GUI
+\`\`\`
+
+
+![](images/image2.png)
 
 ### For any new usage on other datasets
 
@@ -85,21 +88,14 @@ TRC_filepath = r"folderpath/filename.TRC"
 TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 ```
 
-## Example using the GUI
-
-![](images/image2.png)
-
 ## References
-
 [1] Appelhoff, S., Sanderson, M., Brooks, T. L., van Vliet, M., Quentin, R., Holdgraf, C., Chaumon, M., Mikulan, E., Tavabi, K., Höchenberger, R., et al. (2019). Mne-bids : Organizing electrophysiological data into the bids format and facilitating their analysis. The Journal of Open Source Software, 4(44).
 
 [2] Holdgraf, C., Appelhoff, S., Bickel, S., Bouchard, K., D’Ambrosio, S., David, O., Devinsky, O., Dichter, B., Flinker, A., Foster, B. L., et al. (2019). ieeg-bids, extending the brain imaging data structure specification to human intracranial electrophysiology. Scientific data, 6(1) :1–6.
 
 ## Author
-
 - LinkedIn: [Ludovic Gardy](https://www.linkedin.com/in/ludovic-gardy/)
 - Doctoral thesis: [PDF](http://thesesups.ups-tlse.fr/5164/1/2021TOU30190.pdf)
 
 ## Note
-
 For patent reasons, access to the code is partly restricted. Please contact the author for more information at [ludovic.gardy@gmail.com](mailto:ludovic.gardy@gmail.com).
