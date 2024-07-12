@@ -30,7 +30,7 @@ This adaptation of the BIDS structure was made to take into account the *hybrid*
 
 ## Usage
 
-User can use either the script directly (_**create_BIDS_tree.py"**_), or through the GUI provided with this program (_**main"**_).
+User can use either the script directly (_**create_BIDS_tree.py**_), or through the GUI provided with this program (_**main.py**_).
 
 ```python
 python main.py  # opens the GUI
@@ -86,8 +86,6 @@ TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 ```
 
 ## Example using the GUI
-
-To run the program, user can either open the script "_**main.py**_" using the terminal, or simply double click the "_**main.bat**_" file, that should automatically launch the GUI.
 
 ![](images/image2.png)
 
