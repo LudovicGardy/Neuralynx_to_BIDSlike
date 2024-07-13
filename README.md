@@ -1,6 +1,6 @@
 # Halyzia© / Ladybird Data Converter: from Neuralynx to BIDS compatible architecture and formats
 
-## Description
+## 📄 Description
 Halyzia©, also known as Ladybird, is a sophisticated software designed for the automatic detection of fast-ripples (FRs) in epilepsy, as described in the [doctoral thesis of L. Gardy](http://thesesups.ups-tlse.fr/5164/1/2021TOU30190.pdf) and patented under [Brevet: FR3128111](https://data.inpi.fr/brevets/FR3128111). This repository showcases a component of Halyzia© that is focused on the transformation of clinical data acquired with the Neuralynx (research macro- and micro-EEG) and Micromed (clinical macro-EEG) systems to meet the BIDS specifications in terms of tree structure and nomenclature. The term BIDS-like is used to indicate that only the BIDS tree structure and nomenclature are used for the moment, without the formats being BIDS-compatible (e.g. .ncs are not BIDS-compatible) nor the .json and .tsv files necessary for a complete BIDS structure being present.
 
 Several major steps follow:
@@ -19,23 +19,24 @@ This adaptation of the BIDS structure was made to take into account the *hybrid*
 
 ![](images/image1.png)
 
-## Installation
+## ⚒️ Installation
 
 ### Prerequisites
-
 - Python 3.11
-- Python libraries: see requirements.txt
+- Python libraries
+    ```sh
+    pip install -r requirements.txt
+    ```
 
-## Usage
+## 📝 Usage
 
 ### Running the application
 
 User can use either the script directly (_**create_BIDS_tree.py**_), or through the GUI provided with this program.
 
-\`\`\`sh
+```sh
 python main.py  # Launches the GUI
-\`\`\`
-
+```
 
 ![](images/image2.png)
 
@@ -88,14 +89,14 @@ TRC_filepath = r"folderpath/filename.TRC"
 TRC_destination = TRC_to_BIDSlike(TRC_filepath, path_info_dict, process = True)
 ```
 
-## References
+## 📚 References
 [1] Appelhoff, S., Sanderson, M., Brooks, T. L., van Vliet, M., Quentin, R., Holdgraf, C., Chaumon, M., Mikulan, E., Tavabi, K., Höchenberger, R., et al. (2019). Mne-bids : Organizing electrophysiological data into the bids format and facilitating their analysis. The Journal of Open Source Software, 4(44).
 
 [2] Holdgraf, C., Appelhoff, S., Bickel, S., Bouchard, K., D’Ambrosio, S., David, O., Devinsky, O., Dichter, B., Flinker, A., Foster, B. L., et al. (2019). ieeg-bids, extending the brain imaging data structure specification to human intracranial electrophysiology. Scientific data, 6(1) :1–6.
 
-## Author
+## 👤 Author
 - LinkedIn: [Ludovic Gardy](https://www.linkedin.com/in/ludovic-gardy/)
 - Doctoral thesis: [PDF](http://thesesups.ups-tlse.fr/5164/1/2021TOU30190.pdf)
 
-## Note
+## 📑 Note
 For patent reasons, access to the code is partly restricted. Please contact the author for more information at [ludovic.gardy@gmail.com](mailto:ludovic.gardy@gmail.com).
